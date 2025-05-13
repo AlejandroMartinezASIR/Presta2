@@ -5,5 +5,4 @@
 - import_playbook: playbooks/setup_nfs_server.yaml
 - import_playbook: playbooks/setup_nfs_client.yaml
 - import_playbook: playbooks/setup_letsencrypt_certificate.yaml
-- import_playbook: playbooks/deploy_prestashop_backend.yaml
 - import_playbook: playbooks/deploy_prestashop_frontend.yaml

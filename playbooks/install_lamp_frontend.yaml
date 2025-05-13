@@ -3,10 +3,16 @@
   hosts: frontend
   become: true
   vars_files:
-    - vars/variables.yaml  # Cargar variables
+    - ../vars/variables.yaml  # Cargar variables
   tasks:
     - name: Actualizar paquetes
       apt:
+        update_cache: yes
+
+    - name: Añadir repositorio de PHP
+      apt_repository:
+        repo: ppa:ondrej/php
+        state: present
         update_cache: yes
 
     - name: Instalar Apache y PHP
@@ -16,6 +22,9 @@
           - php7.4
           - libapache2-mod-php7.4
           - php7.4-mysql
+          - php7.4-zip
+          - unzip
+          - php7.4-xml
         state: present
 
     - name: Iniciar y habilitar Apache

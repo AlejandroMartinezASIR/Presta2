@@ -1,4 +1,5 @@
 # Configuración de base de datos PrestaShop
+mariadb_root_password: "root"
 prestashop_db_name: "prestashop"
 prestashop_db_user: "prestashop_user"
 prestashop_db_password: "prestashop_pass"
@@ -14,12 +15,13 @@ prestashop_archive: "prestashop_{{ prestashop_version }}.zip"
 
 # IPs de los servidores
 frontend_ips:
-  - "172.31.21.182"
-  - "172.31.20.187"
-frontend_master_ip: "172.31.21.182"
-backend_ip: "172.31.21.127"
-loadbalancer_ip: "172.31.22.208"
-nfs_server_ip: "172.31.20.142"
+  - "172.31.25.176"
+  - "172.31.21.159"
+frontend_master_ip: "172.31.25.176"
+frontend_ip: "172.31.21.159"
+backend_ip: "172.31.23.58"
+loadbalancer_ip: "172.31.17.177"
+nfs_server_ip: "172.31.30.19"
 
 # Configuración de NFS
 nfs_export_path: "/var/www/html"
@@ -40,9 +42,9 @@ letsencrypt_renew_cron_file: "/etc/cron.d/letsencrypt-renew"
 
 # Configuración de Load Balancer
 loadbalancer_backend_ips:
-  - "172.31.21.127"  # IP del servidor backend
-  - "172.31.21.182"  # IP del frontend master (también usado para el load balancer)
-  - "172.31.20.187"  # IP del segundo frontend
+  - "172.31.23.58"  # IP del servidor backend
+  - "172.31.25.176"  # IP del frontend master (también usado para el load balancer)
+  - "172.31.21.159"  # IP del segundo frontend
 loadbalancer_conf_path: "/etc/nginx/sites-available/load-balancer.conf"
 
 # Configuración de MariaDB

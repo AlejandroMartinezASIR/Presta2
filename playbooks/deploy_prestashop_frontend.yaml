@@ -3,18 +3,18 @@
   hosts: frontend_master
   become: true
   vars_files:
-    - "../vars/variables.yaml"
+    - ../vars/variables.yaml
   tasks:
 
     - name: Descargar archivo de PrestaShop
       get_url:
-        url: "https://download.prestashop.com/download/1.7/prestashop_{{ prestashop_version }}.zip"
-        dest: "/tmp/prestashop_{{ prestashop_version }}.zip"
+        url: "https://github.com/PrestaShop/PrestaShop/releases/download/1.7.7.8/prestashop_1.7.7.8.zip"
+        dest: "/tmp/prestashop.zip"
 
     - name: Descomprimir PrestaShop
       unarchive:
-        src: "/tmp/prestashop_{{ prestashop_version }}.zip"
-        dest: "{{ web_root }}"
+        src: /tmp/prestashop.zip
+        dest: /var/www/html
         remote_src: yes
 
     - name: Configurar permisos para PrestaShop
@@ -23,21 +23,8 @@
         state: directory
         recurse: yes
         mode: '0755'
-
-    - name: Configurar Apache para PrestaShop
-      template:
-        src: "000-default.conf"
-        dest: "/etc/apache2/sites-available/000-default.conf"
-      notify:
-        - Reiniciar Apache
-
-    - name: Configurar archivo .htaccess
-      template:
-        src: ".htaccess"
-        dest: "{{ web_root }}/.htaccess"
         owner: www-data
         group: www-data
-        mode: '0644'
 
     - name: Habilitar módulo de reescritura de Apache
       apache2_module:
@@ -46,38 +33,13 @@
 
     - name: Habilitar el sitio PrestaShop en Apache
       command: a2ensite 000-default.conf
-      notify: Reiniciar Apache  
+      notify: Reiniciar Apache
 
+    - name: Asegurar permisos correctos para el frontend
+      command: chown -R www-data:www-data {{ web_root }}
+
+  handlers:
     - name: Reiniciar Apache
       systemd:
         name: apache2
         state: restarted
-      when: apache_restart | bool
-
-    - name: Configurar base de datos
-      mysql_db:
-        name: "{{ prestashop_db_name }}"
-        state: present
-        collation: utf8_general_ci
-        encoding: utf8
-
-    - name: Descargar y extraer la configuración de PrestaShop
-      template:
-        src: "config/settings.inc.php"
-        dest: "{{ web_root }}/config/settings.inc.php"
-        owner: www-data
-        group: www-data
-        mode: '0600'
-
-    - name: Configurar el archivo de entorno de PrestaShop
-      template:
-        src: "config/parameters.php"
-        dest: "{{ web_root }}/app/config/parameters.php"
-        owner: www-data
-        group: www-data
-        mode: '0600'
-
-    - name: Asegurar que el frontend tiene acceso correcto
-      command: chown -R www-data:www-data {{ web_root }}
-      args:
-        removes: "{{ web_root }}"

@@ -1,17 +1,51 @@
 ---
-- name: Configurar NFS en los Frontend
+- name: Configurar cliente NFS en servidores frontend
   hosts: frontend
-  become: true
+  become: yes
+  vars_files:
+    - ../vars/variables.yaml
+
   tasks:
-    - name: Instalar cliente NFS
+    - name: Actualizar el repositorio de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Actualizar paquetes del sistema
+      apt:
+        upgrade: dist
+        autoremove: yes
+
+    - name: Instalar el cliente NFS
       apt:
         name: nfs-common
         state: present
 
-    - name: Montar el directorio NFS
-      mount:
+    - name: Crear el punto de montaje para NFS
+      file:
         path: /var/www/html
-        src: "{{ nfs_server_ip }}:/var/www/html"
-        fstype: nfs
-        state: mounted
-        opts: rw,sync,no_root_squash,no_subtree_check
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Montar el sistema de archivos NFS temporalmente
+      command: mount {{ nfs_server_ip }}:/var/www/html /var/www/html
+      args:
+        creates: /var/www/html/index.php  
+
+    - name: Crear copia de seguridad de /etc/fstab
+      copy:
+        src: /etc/fstab
+        dest: /etc/fstab.bak
+        remote_src: yes
+        mode: '0644'
+
+    - name: Agregar la configuración de montaje de NFS a /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        insertafter: 'UEFI'
+        line: "{{ nfs_server_ip }}:/var/www/html /var/www/html nfs rsize=8192,wsize=8192,timeo=14,intr,noexec,nosuid"
+        state: present
+
+    - name: Montar todos los sistemas de archivos definidos en fstab
+      command: mount -a
