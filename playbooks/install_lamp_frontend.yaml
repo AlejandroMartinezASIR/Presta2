@@ -25,6 +25,9 @@
           - php7.4-zip
           - unzip
           - php7.4-xml
+          - php7.4-curl
+          - php7.4-gd
+          - php7.4-intl
         state: present
 
     - name: Iniciar y habilitar Apache

@@ -35,6 +35,11 @@
       command: a2ensite 000-default.conf
       notify: Reiniciar Apache
 
+    - name: Habilitar el módulo mod_rewrite de Apache
+      apache2_module:
+        name: rewrite
+        state: present
+        
     - name: Asegurar permisos correctos para el frontend
       command: chown -R www-data:www-data {{ web_root }}
 
