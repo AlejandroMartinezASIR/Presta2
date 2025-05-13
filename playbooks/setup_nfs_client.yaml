@@ -1,0 +1,17 @@
+---
+- name: Configurar NFS en los Frontend
+  hosts: frontend
+  become: true
+  tasks:
+    - name: Instalar cliente NFS
+      apt:
+        name: nfs-common
+        state: present
+
+    - name: Montar el directorio NFS
+      mount:
+        path: /var/www/html
+        src: "{{ nfs_server_ip }}:/var/www/html"
+        fstype: nfs
+        state: mounted
+        opts: rw,sync,no_root_squash,no_subtree_check

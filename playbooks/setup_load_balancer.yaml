@@ -1,0 +1,21 @@
+---
+- name: Configurar Load Balancer
+  hosts: loadbalancer
+  become: true
+  tasks:
+    - name: Instalar HAProxy
+      apt:
+        name: haproxy
+        state: present
+
+    - name: Configurar HAProxy
+      copy:
+        src: haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
+        mode: '0644'
+
+    - name: Reiniciar HAProxy
+      systemd:
+        name: haproxy
+        state: restarted
+        enabled: true

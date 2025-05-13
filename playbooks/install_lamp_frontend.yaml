@@ -1,0 +1,25 @@
+---
+- name: Instalar LAMP en frontend
+  hosts: frontend
+  become: true
+  vars_files:
+    - vars/variables.yaml  # Cargar variables
+  tasks:
+    - name: Actualizar paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar Apache y PHP
+      apt:
+        name:
+          - apache2
+          - php7.4
+          - libapache2-mod-php7.4
+          - php7.4-mysql
+        state: present
+
+    - name: Iniciar y habilitar Apache
+      systemd:
+        name: apache2
+        enabled: true
+        state: started

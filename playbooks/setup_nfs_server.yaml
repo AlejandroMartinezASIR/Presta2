@@ -1,0 +1,21 @@
+---
+- name: Configurar NFS Server
+  hosts: nfs
+  become: true
+  tasks:
+    - name: Instalar NFS server
+      apt:
+        name: nfs-kernel-server
+        state: present
+
+    - name: Configurar exports
+      copy:
+        src: ../nfs/exports
+        dest: /etc/exports
+        mode: '0644'
+
+    - name: Reiniciar NFS server
+      systemd:
+        name: nfs-kernel-server
+        state: restarted
+        enabled: true

@@ -1,0 +1,80 @@
+# Configuración de base de datos PrestaShop
+prestashop_db_name: "prestashop"
+prestashop_db_user: "prestashop_user"
+prestashop_db_password: "prestashop_pass"
+
+# Variables para Let’s Encrypt
+domain: "godofthedesert.ddnsking.com"  # Cambia esto por tu dominio real
+email: "ofthedesertgod@gmail.com"  # Cambia esto por tu correo real
+
+# Directorios y versiones de PrestaShop
+web_root: "/var/www/html"
+prestashop_version: "1.7.7.8"  # Cambia según la versión de PrestaShop que necesites
+prestashop_archive: "prestashop_{{ prestashop_version }}.zip"
+
+# IPs de los servidores
+frontend_ips:
+  - "172.31.21.182"
+  - "172.31.20.187"
+frontend_master_ip: "172.31.21.182"
+backend_ip: "172.31.21.127"
+loadbalancer_ip: "172.31.22.208"
+nfs_server_ip: "172.31.20.142"
+
+# Configuración de NFS
+nfs_export_path: "/var/www/html"
+nfs_client_network: "172.31.0.0/16"  # Red de clientes NFS, ajusta según tu infraestructura
+
+# Configuración de Apache y SSL
+apache_conf_path: "/etc/apache2/sites-available/000-default.conf"
+apache_ssl_conf_path: "/etc/apache2/sites-available/default-ssl.conf"
+
+# Variables de SSH para Ansible
+ansible_user: "ubuntu"
+ansible_ssh_private_key_file: "/home/ubuntu/Presta2/labsuser.pem"
+ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
+
+# Configuración de Let’s Encrypt
+letsencrypt_ssl_cert_dir: "/etc/letsencrypt/live/{{ domain }}"
+letsencrypt_renew_cron_file: "/etc/cron.d/letsencrypt-renew"
+
+# Configuración de Load Balancer
+loadbalancer_backend_ips:
+  - "172.31.21.127"  # IP del servidor backend
+  - "172.31.21.182"  # IP del frontend master (también usado para el load balancer)
+  - "172.31.20.187"  # IP del segundo frontend
+loadbalancer_conf_path: "/etc/nginx/sites-available/load-balancer.conf"
+
+# Configuración de MariaDB
+mariadb_root_password: "root_password"
+mariadb_bind_address: "0.0.0.0"  # Permitir acceso remoto
+
+# Configuración de PHP
+php_version: "7.4"  # Cambiar según la versión de PHP que deseas instalar
+
+# Configuración de PHP para PrestaShop
+php_memory_limit: "256M"
+php_max_execution_time: "300"
+php_max_input_vars: "5000"
+
+# Configuración de firewall y seguridad
+firewall_enabled: true
+allowed_ports:
+  - "80"  # HTTP
+  - "443"  # HTTPS
+  - "3306"  # MySQL/MariaDB (si se accede remotamente)
+
+# Configuración para la base de datos PrestaShop (MariaDB)
+mariadb_config:
+  bind_address: "{{ mariadb_bind_address }}"
+  database_name: "{{ prestashop_db_name }}"
+  database_user: "{{ prestashop_db_user }}"
+  database_password: "{{ prestashop_db_password }}"
+
+# Otras variables necesarias
+apache_restart: true
+php_modules:
+  - "php{{ php_version }}-curl"
+  - "php{{ php_version }}-mbstring"
+  - "php{{ php_version }}-xml"
+  - "php{{ php_version }}-mysql"

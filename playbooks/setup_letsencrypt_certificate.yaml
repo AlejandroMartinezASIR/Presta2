@@ -1,0 +1,43 @@
+---
+- name: Configurar Let's Encrypt SSL para PrestaShop
+  hosts: frontend
+  become: true
+  vars_files:
+    - vars/variables.yaml  # Cargar variables
+  tasks:
+    - name: Instalar Certbot
+      apt:
+        name: certbot
+        state: present
+        update_cache: yes
+
+    - name: Instalar plugin de Apache para Certbot
+      apt:
+        name: python3-certbot-apache
+        state: present
+        update_cache: yes
+
+    - name: Obtener certificado SSL de Let's Encrypt
+      command: certbot --apache -d "{{ domain }}" --non-interactive --agree-tos --email "{{ email }}"
+      register: certbot_output
+      ignore_errors: yes
+
+    - name: Comprobar si Certbot ha generado un certificado
+      debug:
+        msg: "{{ certbot_output.stdout }}"
+      when: certbot_output.rc == 0
+
+    - name: Configurar renovación automática del certificado
+      cron:
+        name: "Renovar certificado Let's Encrypt"
+        minute: "0"
+        hour: "0"
+        job: "certbot renew --quiet && systemctl restart apache2"
+        state: present
+
+    - name: Reiniciar Apache después de renovar el certificado
+      systemd:
+        name: apache2
+        state: restarted
+        enabled: true
+      when: certbot_output.rc == 0

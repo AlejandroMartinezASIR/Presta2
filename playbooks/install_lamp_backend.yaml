@@ -1,0 +1,57 @@
+---
+- name: Instalar LAMP en backend
+  hosts: backend
+  become: true
+  vars_files:
+    - vars/variables.yaml  # Cargar variables
+  tasks:
+    - name: Actualizar paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar Apache y PHP
+      apt:
+        name:
+          - apache2
+          - php7.4
+          - libapache2-mod-php7.4
+          - php7.4-mysql
+        state: present
+
+    - name: Instalar MariaDB
+      apt:
+        name: mariadb-server
+        state: present
+
+    - name: Iniciar y habilitar servicios
+      systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - apache2
+        - mariadb
+
+    - name: Crear base de datos PrestaShop
+      mysql_db:
+        name: "{{ prestashop_db_name }}"  # Usar la variable prestashop_db_name
+        state: present
+
+    - name: Crear usuario de base de datos
+      mysql_user:
+        name: "{{ prestashop_db_user }}"  # Usar la variable prestashop_db_user
+        password: "{{ prestashop_db_password }}"  # Usar la variable prestashop_db_password
+        priv: "{{ prestashop_db_name }}.*:ALL"
+        host: '%'
+        state: present
+
+    - name: Permitir acceso remoto a MariaDB
+      lineinfile:
+        path: /etc/mysql/mariadb.conf.d/50-server.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
+
+    - name: Reiniciar MariaDB
+      systemd:
+        name: mariadb
+        state: restarted
