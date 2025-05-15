@@ -16,13 +16,13 @@ apt upgrade -y
 sudo apt install mariadb-server -y
 
 # Copiamos el archivo de configuracion de mysql
-sed -i "s/^bind-address\s*=.*/bind-address = $BACKEND_PRIVATE_IP/" /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i "s/^bind-address\s*=.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Creamos la base de datos y el usuario para PRESTASHOP
 mysql -u root <<EOF
 CREATE DATABASE prestashop CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER 'psuser'@'localhost' IDENTIFIED BY 'pspass';
-GRANT ALL PRIVILEGES ON prestashop.* TO 'psuser'@'localhost';
+CREATE USER 'psuser'@'%' IDENTIFIED BY 'pspass';
+GRANT ALL PRIVILEGES ON prestashop.* TO 'psuser'@'%';
 FLUSH PRIVILEGES;
 EOF
 
