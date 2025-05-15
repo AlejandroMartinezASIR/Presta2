@@ -32,6 +32,7 @@ cp /home/ubuntu/Presta2/conf/load-balancer.conf /etc/nginx/sites-available
 # Sustituimos los valores de la plantilla del archivo de configuración
 sed -i "s/IP_FRONTEND_1/$IP_FRONTEND_1/" /etc/nginx/sites-available/load-balancer.conf
 sed -i "s/IP_FRONTEND_2/$IP_FRONTEND_2/" /etc/nginx/sites-available/load-balancer.conf
+sed -i "s/LE_DOMAIN/$LE_DOMAIN/" /etc/nginx/sites-available/load-balancer.conf
 
 # Habilitamos el virtualhost del balanceador de carga
 if [ ! -f "/etc/nginx/sites-enabled/load-balancer.conf" ]; then 
