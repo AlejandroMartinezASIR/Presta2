@@ -21,7 +21,7 @@ cp /home/ubuntu/conf/000-default.conf /etc/apache2/sites-available
 sudo a2ensite 000-default.conf
 
 # Instalamos las extensiones de PHP necesarias
-sudo apt install php7.4 php7.4-cli php7.4-xml php7.4-curl php7.4-gd php7.4-mbstring php7.4-zip php7.4-intl libapache2-mod-php7.4 -y
+sudo apt install php7.4 php7.4-mysql php7.4-cli php7.4-xml php7.4-curl php7.4-gd php7.4-mbstring php7.4-zip php7.4-intl libapache2-mod-php7.4 -y
 
 # Reiniciamos el servicio de Apache
-sudo systemctl restart apache2
+sudo systemctl reload apache2
