@@ -21,7 +21,7 @@ sed -i "s/^bind-address\s*=.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d
 # Creamos la base de datos y el usuario para PRESTASHOP
 mysql -u root <<EOF
 CREATE DATABASE prestashop CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER 'psuser'@'%' IDENTIFIED BY 'pspass';
+CREATE USER 'psuser'@'localhost' IDENTIFIED BY 'pspass';
 GRANT ALL PRIVILEGES ON prestashop.* TO 'psuser'@'%';
 FLUSH PRIVILEGES;
 EOF
