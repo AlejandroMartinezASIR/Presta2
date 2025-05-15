@@ -27,4 +27,4 @@ FLUSH PRIVILEGES;
 EOF
 
 # Reiniciamos el servicio de MySQL
-systemctl restart mysql
+systemctl restart mariadb
