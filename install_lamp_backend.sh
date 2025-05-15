@@ -18,6 +18,14 @@ sudo apt install mariadb-server -y
 # Copiamos el archivo de configuracion de mysql
 sed -i "s/^bind-address\s*=.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
 
+# Borramos la base de datos y el usuario si existen
+mysql -u root <<EOF
+DROP DATABASE IF EXISTS prestashop;
+DROP USER IF EXISTS 'psuser'@'localhost';
+DROP USER IF EXISTS 'psuser'@'%';
+FLUSH PRIVILEGES;
+EOF
+
 # Creamos la base de datos y el usuario para PRESTASHOP
 mysql -u root <<EOF
 CREATE DATABASE prestashop CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
